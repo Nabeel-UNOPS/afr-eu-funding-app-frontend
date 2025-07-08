@@ -1,10 +1,15 @@
 steps:
-  # Use a builder with a modern Node.js version (e.g., v20)
-  - name: 'gcr.io/cloud-builders/npm:20'
+  # This step explicitly installs and uses Node.js v20
+  - name: 'gcr.io/cloud-builders/nvm'
+    args: ['install', '20']
+  - name: 'gcr.io/cloud-builders/nvm'
+    args: ['use', '20']
+  # Now that the correct Node version is active, we can run our commands
+  - name: 'gcr.io/cloud-builders/npm'
     args: ['install']
-  - name: 'gcr.io/cloud-builders/npm:20'
+  - name: 'gcr.io/cloud-builders/npm'
     args: ['run', 'build']
-  - name: 'gcr.io/cloud-builders/npm:20'
+  - name: 'gcr.io/cloud-builders/npm'
     args: ['run', 'deploy']
 options:
   logging: CLOUD_LOGGING_ONLY
