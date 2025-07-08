@@ -1,14 +1,12 @@
 steps:
-  # This step explicitly installs and uses Node.js v20
-  - name: 'gcr.io/cloud-builders/nvm'
-    args: ['install', '20']
-  - name: 'gcr.io/cloud-builders/nvm'
-    args: ['use', '20']
-  # Now that the correct Node version is active, we can run our commands
-  - name: 'gcr.io/cloud-builders/npm'
+  # Use the official Node.js v20 image for installation and building
+  - name: 'node:20'
+    entrypoint: 'npm'
     args: ['install']
-  - name: 'gcr.io/cloud-builders/npm'
+  - name: 'node:20'
+    entrypoint: 'npm'
     args: ['run', 'build']
+  # Use the standard Google Cloud builder for deployment, which has Firebase tools
   - name: 'gcr.io/cloud-builders/npm'
     args: ['run', 'deploy']
 options:
