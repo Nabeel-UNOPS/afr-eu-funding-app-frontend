@@ -1,9 +1,10 @@
 steps:
-  - name: 'gcr.io/cloud-builders/npm'
+  # Use a builder with a modern Node.js version (e.g., v20)
+  - name: 'gcr.io/cloud-builders/npm:20'
     args: ['install']
-  - name: 'gcr.io/cloud-builders/npm'
+  - name: 'gcr.io/cloud-builders/npm:20'
     args: ['run', 'build']
-  - name: 'gcr.io/cloud-builders/npm'
+  - name: 'gcr.io/cloud-builders/npm:20'
     args: ['run', 'deploy']
 options:
   logging: CLOUD_LOGGING_ONLY
