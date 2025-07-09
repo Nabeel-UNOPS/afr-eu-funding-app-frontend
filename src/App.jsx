@@ -1,27 +1,27 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Filter, X, ChevronDown, ChevronRight, Briefcase, Globe, DollarSign, Calendar, CheckCircle, Clock, BarChart2, HelpCircle, Mail, Phone } from 'lucide-react';
+import { Search, Filter, X, ChevronRight, Briefcase, Globe, DollarSign, Calendar, CheckCircle, Clock, BarChart2 } from 'lucide-react';
 
 // --- Components ---
 
 const Header = () => (
     <header className="bg-white shadow-md p-4 flex justify-between items-center">
-        <div className="flex items-center space-x-3">
-            <div className="bg-blue-900 p-2 rounded-md">
-                <svg className="w-8 h-8 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2ZM12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20C16.42 20 20 16.42 20 12C20 7.58 16.42 4 12 4ZM11 6H13V11H11V6ZM11 13H13V18H11V13Z" transform="rotate(90 12 12)"/>
-                    <path d="M11 6H13V11H11V6ZM11 13H13V18H11V13Z" transform="rotate(180 12 12)"/>
-                </svg>
-            </div>
-            <h1 className="text-2xl font-bold text-blue-900">EU-Africa Funding Gateway</h1>
+        <div className="flex items-center space-x-4">
+            <img 
+                src="https://www.un.org/youthenvoy/wp-content/uploads/2016/10/UNOPS-logo-300x56.png" 
+                alt="UNOPS Logo" 
+                className="h-10"
+                onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/150x40/0075C9/FFFFFF?text=UNOPS'; }}
+            />
+            <h1 className="text-xl md:text-2xl font-semibold text-gray-800">Africa Funding Gateway</h1>
         </div>
     </header>
 );
 
 const FilterSection = ({ filters, setFilters, onReset, allOpportunities }) => {
     // Dynamically get unique values from the live data
-    const countries = [...new Set(allOpportunities.map(op => op.country))].sort();
-    const thematicPriorities = [...new Set(allOpportunities.map(op => op.thematicPriority))].sort();
-    const fundingTypes = [...new Set(allOpportunities.map(op => op.fundingType))].sort();
+    const countries = [...new Set(allOpportunities.map(op => op.country).filter(Boolean))].sort();
+    const thematicPriorities = [...new Set(allOpportunities.map(op => op.thematicPriority).filter(Boolean))].sort();
+    const fundingTypes = [...new Set(allOpportunities.map(op => op.fundingType).filter(Boolean))].sort();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -31,69 +31,52 @@ const FilterSection = ({ filters, setFilters, onReset, allOpportunities }) => {
     return (
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center"><Filter className="w-5 h-5 mr-2" /> Filters</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-                {/* Search Term */}
-                <div className="relative col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-2">
-                    <label htmlFor="searchTerm" className="text-sm font-medium text-gray-600 block mb-1">Search</label>
-                    <input
-                        type="text"
-                        name="searchTerm"
-                        id="searchTerm"
-                        placeholder="e.g., 'Global Gateway' or 'Kenya'"
-                        value={filters.searchTerm}
-                        onChange={handleInputChange}
-                        className="w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    <Search className="absolute left-3 top-9 w-5 h-5 text-gray-400" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 items-end">
+                <div className="relative col-span-1 md:col-span-2">
+                    <label htmlFor="searchTerm" className="text-sm font-medium text-gray-600 block mb-1">Search by Keyword</label>
+                    <div className="relative">
+                        <input
+                            type="text"
+                            name="searchTerm"
+                            id="searchTerm"
+                            placeholder="e.g., 'Health' or 'Kenya'"
+                            value={filters.searchTerm}
+                            onChange={handleInputChange}
+                            className="w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    </div>
                 </div>
 
-                {/* Country */}
                 <div>
                     <label htmlFor="country" className="text-sm font-medium text-gray-600 block mb-1">Country</label>
-                    <select name="country" id="country" value={filters.country} onChange={handleInputChange} className="w-full p-2 border border-gray-300 rounded-md">
+                    <select name="country" id="country" value={filters.country} onChange={handleInputChange} className="w-full p-2 border border-gray-300 rounded-md bg-white">
                         <option value="">All Countries</option>
                         {countries.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                 </div>
 
-                {/* Thematic Priority */}
                 <div>
                     <label htmlFor="thematicPriority" className="text-sm font-medium text-gray-600 block mb-1">Thematic Priority</label>
-                    <select name="thematicPriority" id="thematicPriority" value={filters.thematicPriority} onChange={handleInputChange} className="w-full p-2 border border-gray-300 rounded-md">
+                    <select name="thematicPriority" id="thematicPriority" value={filters.thematicPriority} onChange={handleInputChange} className="w-full p-2 border border-gray-300 rounded-md bg-white">
                         <option value="">All Priorities</option>
                         {thematicPriorities.map(p => <option key={p} value={p}>{p}</option>)}
                     </select>
                 </div>
-
-                {/* Funding Type */}
+                
                 <div>
-                    <label htmlFor="fundingType" className="text-sm font-medium text-gray-600 block mb-1">Funding Type</label>
-                    <select name="fundingType" id="fundingType" value={filters.fundingType} onChange={handleInputChange} className="w-full p-2 border border-gray-300 rounded-md">
-                        <option value="">All Types</option>
-                        {fundingTypes.map(t => <option key={t} value={t}>{t}</option>)}
-                    </select>
-                </div>
-
-                {/* Status */}
-                <div>
-                    <label htmlFor="status" className="text-sm font-medium text-gray-600 block mb-1">Status</label>
-                    <select name="status" id="status" value={filters.status} onChange={handleInputChange} className="w-full p-2 border border-gray-300 rounded-md">
-                        <option value="">All Statuses</option>
-                        <option value="Open">Open</option>
-                        <option value="Closed">Closed</option>
-                    </select>
+                     <button onClick={onReset} className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100">
+                        Reset Filters
+                    </button>
                 </div>
             </div>
-             <button onClick={onReset} className="mt-4 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100">
-                Reset Filters
-            </button>
         </div>
     );
 };
 
 const FundingCard = ({ opportunity, onSelect }) => {
     const { title, country, fundingAmount, deadline, status } = opportunity;
-    const isPastDeadline = new Date(deadline) < new Date();
+    const isPastDeadline = deadline ? new Date(deadline) < new Date() : false;
     const effectiveStatus = status === 'Closed' || isPastDeadline ? 'Closed' : 'Open';
 
     return (
@@ -206,34 +189,8 @@ const FundingModal = ({ opportunity, onClose }) => {
     );
 };
 
-const SupportSection = () => (
-    <div className="mt-8 p-6 bg-white rounded-lg border border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center"><HelpCircle className="w-7 h-7 mr-3 text-blue-600"/>Support & Contacts</h2>
-        <p className="text-gray-600 mb-6">For questions about specific funding opportunities or the application process, please use the contacts below.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-gray-700 mb-2">General Inquiries</h3>
-                <div className="flex items-center space-x-3 text-gray-600">
-                    <Mail className="w-5 h-5 text-gray-500"/>
-                    <a href="mailto:funding-support@africa-gateway.eu" className="hover:text-blue-600">funding-support@africa-gateway.eu</a>
-                </div>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-gray-700 mb-2">Technical Support</h3>
-                <div className="flex items-center space-x-3 text-gray-600">
-                    <Phone className="w-5 h-5 text-gray-500"/>
-                    <a href="tel:+1234567890" className="hover:text-blue-600">+1 (234) 567-890</a>
-                </div>
-            </div>
-        </div>
-        <p className="text-xs text-gray-500 mt-6">For specific questions related to an EU Delegation in a particular country, please refer to the official EU websites.</p>
-    </div>
-);
-
-
 // --- Main App Component ---
 export default function App() {
-    const [activeTab, setActiveTab] = useState('opportunities');
     const [selectedOpportunity, setSelectedOpportunity] = useState(null);
     const [allOpportunities, setAllOpportunities] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -250,7 +207,6 @@ export default function App() {
 
     // Fetch data from the live backend API when the component loads
     useEffect(() => {
-        // IMPORTANT: Replace this with the URL you copied from deploying your 'api-function'
         const API_URL = "https://us-central1-unops-cameron.cloudfunctions.net/api-function"; 
 
         fetch(API_URL)
@@ -261,7 +217,7 @@ export default function App() {
                 return res.json();
             })
             .then(data => {
-                setAllOpportunities(data);
+                setAllOpportunities(Array.isArray(data) ? data : []);
                 setIsLoading(false);
             })
             .catch(err => {
@@ -269,21 +225,25 @@ export default function App() {
                 setError(err.message);
                 setIsLoading(false);
             });
-    }, []); // The empty array ensures this effect runs only once on mount
+    }, []);
 
     const filteredOpportunities = useMemo(() => {
         if (!allOpportunities) return [];
         return allOpportunities.filter(op => {
+            if (!op || typeof op.title !== 'string') return false; // Data integrity check
             const searchTermLower = filters.searchTerm.toLowerCase();
             const isPastDeadline = op.deadline ? new Date(op.deadline) < new Date() : false;
             const effectiveStatus = op.status === 'Closed' || isPastDeadline ? 'Closed' : 'Open';
+
+            const titleMatch = op.title.toLowerCase().includes(searchTermLower);
+            const descriptionMatch = op.description && op.description.toLowerCase().includes(searchTermLower);
 
             return (
                 (filters.country ? op.country === filters.country : true) &&
                 (filters.thematicPriority ? op.thematicPriority === filters.thematicPriority : true) &&
                 (filters.fundingType ? op.fundingType === filters.fundingType : true) &&
                 (filters.status ? effectiveStatus === filters.status : true) &&
-                (op.title.toLowerCase().includes(searchTermLower) || (op.description && op.description.toLowerCase().includes(searchTermLower)))
+                (titleMatch || descriptionMatch)
             );
         });
     }, [filters, allOpportunities]);
@@ -292,54 +252,37 @@ export default function App() {
         <div className="bg-gray-100 min-h-screen font-sans">
             <Header />
             <main className="p-4 md:p-8">
-                <div className="mb-6 border-b border-gray-300">
-                    <nav className="flex space-x-6">
-                        <button onClick={() => setActiveTab('opportunities')} className={`py-3 px-2 text-lg font-medium ${activeTab === 'opportunities' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}>
-                           Funding Opportunities
-                        </button>
-                        <button onClick={() => setActiveTab('support')} className={`py-3 px-2 text-lg font-medium ${activeTab === 'support' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}>
-                           Support
-                        </button>
-                    </nav>
-                </div>
+                <FilterSection filters={filters} setFilters={setFilters} onReset={() => setFilters(initialFilters)} allOpportunities={allOpportunities} />
                 
-                {activeTab === 'opportunities' && (
-                    <>
-                        <FilterSection filters={filters} setFilters={setFilters} onReset={() => setFilters(initialFilters)} allOpportunities={allOpportunities} />
-                        
-                        <div className="mt-6">
-                            {isLoading ? (
-                                <div className="text-center py-16">
-                                    <p className="text-gray-600">Loading opportunities...</p>
-                                </div>
-                            ) : error ? (
-                                <div className="text-center py-16 px-6 bg-red-50 text-red-700 rounded-lg border border-red-200">
-                                    <h3 className="text-xl font-semibold">Failed to load data</h3>
-                                    <p className="mt-2">Could not connect to the backend. Please try again later.</p>
-                                    <p className="text-xs mt-4">Error: {error}</p>
+                <div className="mt-6">
+                    {isLoading ? (
+                        <div className="text-center py-16">
+                            <p className="text-gray-600 text-lg">Loading opportunities...</p>
+                        </div>
+                    ) : error ? (
+                        <div className="text-center py-16 px-6 bg-red-50 text-red-700 rounded-lg border border-red-200">
+                            <h3 className="text-xl font-semibold">Failed to load data</h3>
+                            <p className="mt-2">Could not connect to the backend. Please try again later.</p>
+                            <p className="text-xs mt-4">Error: {error}</p>
+                        </div>
+                    ) : (
+                        <>
+                            <p className="text-gray-600 mb-4">{filteredOpportunities.length} opportunities found.</p>
+                            {filteredOpportunities.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {filteredOpportunities.map((op, index) => (
+                                        <FundingCard key={op.id || index} opportunity={op} onSelect={setSelectedOpportunity} />
+                                    ))}
                                 </div>
                             ) : (
-                                <>
-                                    <p className="text-gray-600 mb-4">{filteredOpportunities.length} opportunities found.</p>
-                                    {filteredOpportunities.length > 0 ? (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                            {filteredOpportunities.map((op, index) => (
-                                                <FundingCard key={op.id || index} opportunity={op} onSelect={setSelectedOpportunity} />
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="text-center py-16 px-6 bg-white rounded-lg border border-gray-200">
-                                            <h3 className="text-xl font-semibold text-gray-700">No matching opportunities found</h3>
-                                            <p className="text-gray-500 mt-2">Try adjusting your filters or check back later.</p>
-                                        </div>
-                                    )}
-                                </>
+                                <div className="text-center py-16 px-6 bg-white rounded-lg border border-gray-200">
+                                    <h3 className="text-xl font-semibold text-gray-700">No matching opportunities found</h3>
+                                    <p className="text-gray-500 mt-2">Try adjusting your filters or check back later.</p>
+                                </div>
                             )}
-                        </div>
-                    </>
-                )}
-
-                {activeTab === 'support' && <SupportSection />}
+                        </>
+                    )}
+                </div>
             </main>
             
             <FundingModal opportunity={selectedOpportunity} onClose={() => setSelectedOpportunity(null)} />
