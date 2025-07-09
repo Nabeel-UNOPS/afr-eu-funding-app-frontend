@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "target": "funding-app",
     "public": "dist",
     "ignore": [
       "firebase.json",

@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "unops-cameron"
-  }
+  },
+  "targets": {
+    "unops-cameron": {
+      "hosting": {
+        "funding-app": [
+          "unopsafrica-funding-opportunities"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
