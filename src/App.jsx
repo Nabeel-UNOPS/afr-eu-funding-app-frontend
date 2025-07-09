@@ -1,124 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Filter, X, ChevronDown, ChevronRight, Briefcase, Globe, DollarSign, Calendar, CheckCircle, Clock, BarChart2, HelpCircle, Mail, Phone } from 'lucide-react';
-
-// --- Live-Sourced Mock Data (Updated July 2025) ---
-// This data is based on real programs found on the EU's official websites.
-// It simulates what a live AI scraping tool would provide to the front-end.
-const fundingOpportunities = [
-    {
-        id: 1,
-        title: "Global Gateway: Africa-EU Green Energy Initiative",
-        country: "Multiple",
-        region: "Pan-African",
-        thematicPriority: "Green Deal",
-        fundingType: "Development",
-        fundingAmount: "€3.4 Billion (Team Europe)",
-        deadline: "2027-12-31", // Indicative deadline for the framework
-        status: "Open",
-        description: "A flagship initiative under the Global Gateway strategy to support Africa's green transition by increasing renewable energy capacity, promoting energy efficiency, and ensuring a just transition.",
-        eligibility: "African partner countries, regional organizations, public and private sector entities. Specific calls for proposals are released periodically.",
-        applicationLink: "https://commission.europa.eu/strategy-and-policy/priorities-2019-2024/stronger-europe-world/global-gateway_en",
-        impactMetrics: {
-            funded: "€3.4 Billion",
-            usage: "€450,000,000 (13%)",
-            milestones: [
-                { name: "Strategic Partnerships Formed", completed: true },
-                { name: "First Round of Projects Selected", completed: false },
-                { name: "Mid-term Framework Review", completed: false },
-            ],
-            kpis: [
-                { name: "Renewable Energy Capacity (GW)", value: "5 / 50" },
-                { name: "People with Energy Access", value: "1M / 100M" },
-            ]
-        }
-    },
-    {
-        id: 2,
-        title: "NDICI-Global Europe: Support for Health Systems in Sub-Saharan Africa",
-        country: "Multiple",
-        region: "Sub-Saharan Africa",
-        thematicPriority: "Health",
-        fundingType: "Development",
-        fundingAmount: "€29.18 Billion (Budget for Africa)",
-        deadline: "2027-12-31", // Overall program deadline
-        status: "Open",
-        description: "Strengthening health systems, promoting universal health coverage, and boosting local manufacturing of vaccines, medicines, and health technologies in Africa.",
-        eligibility: "Governments, civil society organizations (CSOs), and research institutions in Sub-Saharan African countries.",
-        applicationLink: "https://international-partnerships.ec.europa.eu/funding/funding-instruments/ndici-global-europe_en",
-        impactMetrics: {
-            funded: "€29.18 Billion",
-            usage: "€3.1 Billion (11%)",
-            milestones: [
-                { name: "Country-level Needs Assessments", completed: true },
-                { name: "Launch of Vaccine Production Hubs", completed: false },
-                { name: "Healthcare Worker Training Programs", completed: false },
-            ],
-            kpis: [
-                { name: "Health Facilities Upgraded", value: "25 / 500" },
-                { name: "People with Improved Healthcare", value: "5M / 50M" },
-            ]
-        }
-    },
-    {
-        id: 3,
-        title: "Humanitarian Aid for the Horn of Africa Crisis",
-        country: "Ethiopia, Somalia, Kenya",
-        region: "East Africa",
-        thematicPriority: "Humanitarian Aid",
-        fundingType: "Humanitarian",
-        fundingAmount: "€81.5 Million (2025 Allocation)",
-        deadline: "2025-12-31", // Annual allocation deadline
-        status: "Open",
-        description: "Providing life-saving assistance to people affected by conflict, climate change (droughts and floods), and food insecurity in the Horn of Africa.",
-        eligibility: "Certified humanitarian partners of the EU (e.g., UN agencies, international NGOs) with operational presence in the region.",
-        applicationLink: "https://civil-protection-humanitarian-aid.ec.europa.eu/where/africa/horn-africa_en",
-        impactMetrics: {
-            funded: "€81.5 Million",
-            usage: "€20 Million (25%)",
-            milestones: [
-                { name: "Rapid Response Mechanism Activated", completed: true },
-                { name: "Food & Nutrition Aid Distribution", completed: false },
-                { name: "Water & Sanitation Projects", completed: false },
-            ],
-            kpis: [
-                { name: "People Receiving Food Aid", value: "500,000 / 2,000,000" },
-                { name: "Children Treated for Malnutrition", value: "50,000 / 250,000" },
-            ]
-        }
-    },
-    {
-        id: 4,
-        title: "Erasmus+ Intra-Africa Academic Mobility Scheme",
-        country: "Multiple",
-        region: "Pan-African",
-        thematicPriority: "Education",
-        fundingType: "Development",
-        fundingAmount: "Varies per project",
-        deadline: "2026-04-28", // Example call deadline
-        status: "Open",
-        description: "Enhancing human capital development in Africa by providing opportunities for students and staff of higher education institutions to undertake study, training, or research in another African country.",
-        eligibility: "Consortia of higher education institutions from different African countries.",
-        applicationLink: "https://eacea.ec.europa.eu/erasmus-plus/intra-africa-academic-mobility-scheme_en",
-        impactMetrics: {
-            funded: "N/A",
-            usage: "N/A",
-            milestones: [
-                { name: "Call for Proposals Published", completed: true },
-                { name: "Application Period", completed: false },
-                { name: "Selection Results", completed: false },
-            ],
-            kpis: [
-                { name: "Student Mobilities Funded", value: "0 / 1,500" },
-                { name: "Staff Mobilities Funded", value: "0 / 500" },
-            ]
-        }
-    }
-];
-
-// --- Helper Data ---
-const countries = [...new Set(fundingOpportunities.map(op => op.country))].sort();
-const thematicPriorities = [...new Set(fundingOpportunities.map(op => op.thematicPriority))].sort();
-const fundingTypes = [...new Set(fundingOpportunities.map(op => op.fundingType))].sort();
 
 // --- Components ---
 
@@ -136,7 +17,12 @@ const Header = () => (
     </header>
 );
 
-const FilterSection = ({ filters, setFilters, onReset }) => {
+const FilterSection = ({ filters, setFilters, onReset, allOpportunities }) => {
+    // Dynamically get unique values from the live data
+    const countries = [...new Set(allOpportunities.map(op => op.country))].sort();
+    const thematicPriorities = [...new Set(allOpportunities.map(op => op.thematicPriority))].sort();
+    const fundingTypes = [...new Set(allOpportunities.map(op => op.fundingType))].sort();
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFilters(prev => ({ ...prev, [name]: value }));
@@ -216,15 +102,15 @@ const FundingCard = ({ opportunity, onSelect }) => {
                 <h4 className="text-lg font-bold text-blue-800 mb-2">{title}</h4>
                 <div className="flex items-center text-gray-600 text-sm mb-2">
                     <Globe className="w-4 h-4 mr-2 text-gray-500" />
-                    <span>{country}</span>
+                    <span>{country || 'N/A'}</span>
                 </div>
                 <div className="flex items-center text-gray-600 text-sm mb-2">
                     <DollarSign className="w-4 h-4 mr-2 text-gray-500" />
-                    <span className="font-semibold">{fundingAmount}</span>
+                    <span className="font-semibold">{fundingAmount || 'N/A'}</span>
                 </div>
                 <div className="flex items-center text-gray-600 text-sm mb-4">
                     <Calendar className="w-4 h-4 mr-2 text-gray-500" />
-                    <span>Deadline: {new Date(deadline).toLocaleDateString()}</span>
+                    <span>Deadline: {deadline ? new Date(deadline).toLocaleDateString() : 'N/A'}</span>
                 </div>
             </div>
             <div className="bg-gray-50 p-4 flex justify-between items-center rounded-b-lg">
@@ -251,9 +137,9 @@ const FundingModal = ({ opportunity, onClose }) => {
                     <div>
                         <h2 className="text-2xl font-bold text-blue-900">{opportunity.title}</h2>
                         <div className="flex items-center text-gray-500 mt-2 space-x-4 text-sm">
-                            <span className="flex items-center"><Globe className="w-4 h-4 mr-1.5"/>{opportunity.country}</span>
-                            <span className="flex items-center"><Briefcase className="w-4 h-4 mr-1.5"/>{opportunity.thematicPriority}</span>
-                            <span className="flex items-center"><DollarSign className="w-4 h-4 mr-1.5"/>{opportunity.fundingAmount}</span>
+                            <span className="flex items-center"><Globe className="w-4 h-4 mr-1.5"/>{opportunity.country || 'N/A'}</span>
+                            <span className="flex items-center"><Briefcase className="w-4 h-4 mr-1.5"/>{opportunity.thematicPriority || 'N/A'}</span>
+                            <span className="flex items-center"><DollarSign className="w-4 h-4 mr-1.5"/>{opportunity.fundingAmount || 'N/A'}</span>
                         </div>
                     </div>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
@@ -277,16 +163,16 @@ const FundingModal = ({ opportunity, onClose }) => {
                         <div className="space-y-6">
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800 mb-2">Description</h3>
-                                <p className="text-gray-600 leading-relaxed">{opportunity.description}</p>
+                                <p className="text-gray-600 leading-relaxed">{opportunity.description || 'Not available.'}</p>
                             </div>
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800 mb-2">Eligibility</h3>
-                                <p className="text-gray-600 leading-relaxed">{opportunity.eligibility}</p>
+                                <p className="text-gray-600 leading-relaxed">{opportunity.eligibility || 'Not available.'}</p>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                 <div className="bg-gray-50 p-4 rounded-lg">
                                     <h4 className="font-semibold text-gray-700 mb-2 flex items-center"><Calendar className="w-5 h-5 mr-2 text-blue-600"/>Application Deadline</h4>
-                                    <p className="text-gray-800 text-base font-medium">{new Date(opportunity.deadline).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                    <p className="text-gray-800 text-base font-medium">{opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</p>
                                 </div>
                                 <div className="bg-gray-50 p-4 rounded-lg">
                                     <h4 className="font-semibold text-gray-700 mb-2 flex items-center">
@@ -299,56 +185,10 @@ const FundingModal = ({ opportunity, onClose }) => {
                         </div>
                     )}
                     {activeTab === 'impact' && (
-                        <div className="space-y-6">
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-800 mb-3">Funding Overview</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
-                                    <div className="bg-blue-50 p-4 rounded-lg">
-                                        <p className="text-sm text-blue-700">Total Funding</p>
-                                        <p className="text-2xl font-bold text-blue-900">{opportunity.impactMetrics.funded}</p>
-                                    </div>
-                                    <div className="bg-green-50 p-4 rounded-lg">
-                                        <p className="text-sm text-green-700">Funds Utilized</p>
-                                        <p className="text-2xl font-bold text-green-900">{opportunity.impactMetrics.usage}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-800 mb-3">Project Milestones</h3>
-                                <ul className="space-y-2">
-                                    {opportunity.impactMetrics.milestones.map((milestone, index) => (
-                                        <li key={index} className="flex items-center p-3 bg-gray-50 rounded-md">
-                                            {milestone.completed ? <CheckCircle className="w-5 h-5 text-green-500 mr-3"/> : <Clock className="w-5 h-5 text-yellow-500 mr-3"/>}
-                                            <span className={`flex-grow ${milestone.completed ? 'text-gray-500 line-through' : 'text-gray-800'}`}>{milestone.name}</span>
-                                            <span className={`text-sm font-semibold ${milestone.completed ? 'text-green-600' : 'text-yellow-600'}`}>
-                                                {milestone.completed ? 'Completed' : 'In Progress'}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                             <div>
-                                <h3 className="text-lg font-semibold text-gray-800 mb-3">Key Performance Indicators (KPIs)</h3>
-                                <div className="space-y-3">
-                                    {opportunity.impactMetrics.kpis.map((kpi, index) => {
-                                        const parts = kpi.value.split(' / ');
-                                        const current = parseFloat(parts[0].replace(/,/g, '').replace(/[A-Za-z]/g, ''));
-                                        const total = parseFloat(parts[1].replace(/,/g, '').replace(/[A-Za-z]/g, ''));
-                                        const percentage = total > 0 ? (current / total) * 100 : 0;
-                                        return (
-                                            <div key={index}>
-                                                <div className="flex justify-between items-center mb-1">
-                                                    <span className="text-sm font-medium text-gray-700">{kpi.name}</span>
-                                                    <span className="text-sm text-gray-500">{kpi.value}</span>
-                                                </div>
-                                                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                                    <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${percentage}%` }}></div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
+                        <div className="text-center py-10">
+                            <BarChart2 className="w-12 h-12 mx-auto text-gray-300 mb-4" />
+                            <h3 className="text-lg font-semibold text-gray-700">Impact Tracking</h3>
+                            <p className="text-gray-500 mt-2">This feature is under development and will be available soon.</p>
                         </div>
                     )}
                 </div>
@@ -357,8 +197,8 @@ const FundingModal = ({ opportunity, onClose }) => {
                     <button onClick={onClose} className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100">
                         Close
                     </button>
-                    <a href={opportunity.applicationLink} target="_blank" rel="noopener noreferrer" className="px-6 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 inline-flex items-center">
-                        Go to Application <ChevronRight className="w-4 h-4 ml-1"/>
+                    <a href={opportunity.source_url || '#'} target="_blank" rel="noopener noreferrer" className="px-6 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 inline-flex items-center">
+                        Go to Source <ChevronRight className="w-4 h-4 ml-1"/>
                     </a>
                 </div>
             </div>
@@ -395,6 +235,10 @@ const SupportSection = () => (
 export default function App() {
     const [activeTab, setActiveTab] = useState('opportunities');
     const [selectedOpportunity, setSelectedOpportunity] = useState(null);
+    const [allOpportunities, setAllOpportunities] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     const initialFilters = {
         searchTerm: '',
         country: '',
@@ -404,10 +248,34 @@ export default function App() {
     };
     const [filters, setFilters] = useState(initialFilters);
 
+    // Fetch data from the live backend API when the component loads
+    useEffect(() => {
+        // IMPORTANT: Replace this with the URL you copied from deploying your 'api-function'
+        const API_URL = "https://us-central1-unops-cameron.cloudfunctions.net/api-function"; 
+
+        fetch(API_URL)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
+            .then(data => {
+                setAllOpportunities(data);
+                setIsLoading(false);
+            })
+            .catch(err => {
+                console.error("Error fetching data:", err);
+                setError(err.message);
+                setIsLoading(false);
+            });
+    }, []); // The empty array ensures this effect runs only once on mount
+
     const filteredOpportunities = useMemo(() => {
-        return fundingOpportunities.filter(op => {
+        if (!allOpportunities) return [];
+        return allOpportunities.filter(op => {
             const searchTermLower = filters.searchTerm.toLowerCase();
-            const isPastDeadline = new Date(op.deadline) < new Date();
+            const isPastDeadline = op.deadline ? new Date(op.deadline) < new Date() : false;
             const effectiveStatus = op.status === 'Closed' || isPastDeadline ? 'Closed' : 'Open';
 
             return (
@@ -415,10 +283,10 @@ export default function App() {
                 (filters.thematicPriority ? op.thematicPriority === filters.thematicPriority : true) &&
                 (filters.fundingType ? op.fundingType === filters.fundingType : true) &&
                 (filters.status ? effectiveStatus === filters.status : true) &&
-                (op.title.toLowerCase().includes(searchTermLower) || op.description.toLowerCase().includes(searchTermLower))
+                (op.title.toLowerCase().includes(searchTermLower) || (op.description && op.description.toLowerCase().includes(searchTermLower)))
             );
         });
-    }, [filters]);
+    }, [filters, allOpportunities]);
 
     return (
         <div className="bg-gray-100 min-h-screen font-sans">
@@ -437,21 +305,35 @@ export default function App() {
                 
                 {activeTab === 'opportunities' && (
                     <>
-                        <FilterSection filters={filters} setFilters={setFilters} onReset={() => setFilters(initialFilters)} />
+                        <FilterSection filters={filters} setFilters={setFilters} onReset={() => setFilters(initialFilters)} allOpportunities={allOpportunities} />
                         
                         <div className="mt-6">
-                            <p className="text-gray-600 mb-4">{filteredOpportunities.length} opportunities found.</p>
-                            {filteredOpportunities.length > 0 ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {filteredOpportunities.map(op => (
-                                        <FundingCard key={op.id} opportunity={op} onSelect={setSelectedOpportunity} />
-                                    ))}
+                            {isLoading ? (
+                                <div className="text-center py-16">
+                                    <p className="text-gray-600">Loading opportunities...</p>
+                                </div>
+                            ) : error ? (
+                                <div className="text-center py-16 px-6 bg-red-50 text-red-700 rounded-lg border border-red-200">
+                                    <h3 className="text-xl font-semibold">Failed to load data</h3>
+                                    <p className="mt-2">Could not connect to the backend. Please try again later.</p>
+                                    <p className="text-xs mt-4">Error: {error}</p>
                                 </div>
                             ) : (
-                                <div className="text-center py-16 px-6 bg-white rounded-lg border border-gray-200">
-                                    <h3 className="text-xl font-semibold text-gray-700">No matching opportunities found</h3>
-                                    <p className="text-gray-500 mt-2">Try adjusting your filters or search terms.</p>
-                                </div>
+                                <>
+                                    <p className="text-gray-600 mb-4">{filteredOpportunities.length} opportunities found.</p>
+                                    {filteredOpportunities.length > 0 ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                            {filteredOpportunities.map((op, index) => (
+                                                <FundingCard key={op.id || index} opportunity={op} onSelect={setSelectedOpportunity} />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-16 px-6 bg-white rounded-lg border border-gray-200">
+                                            <h3 className="text-xl font-semibold text-gray-700">No matching opportunities found</h3>
+                                            <p className="text-gray-500 mt-2">Try adjusting your filters or check back later.</p>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     </>
