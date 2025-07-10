@@ -5,7 +5,7 @@ import { Search, Filter, X, ChevronRight, Briefcase, Globe, DollarSign, Calendar
 
 const Header = () => (
     <header className="bg-white shadow-sm p-4 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="max-w-7xl mx-auto flex justify-center items-center">
             <div className="flex items-center space-x-4">
                 <img 
                     src="https://www.unops.org/assets/unops-logo-blue.svg" 
@@ -13,7 +13,7 @@ const Header = () => (
                     className="h-8"
                     onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/120x32/0075C9/FFFFFF?text=UNOPS'; }}
                 />
-                <h1 className="hidden sm:block text-xl font-semibold text-gray-700">Africa Funding Gateway</h1>
+                <h1 className="text-xl md:text-2xl font-semibold text-gray-700">UNOPS Africa Funding Gateway</h1>
             </div>
         </div>
     </header>
