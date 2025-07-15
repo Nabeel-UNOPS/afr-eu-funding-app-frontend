@@ -1,19 +1,18 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Filter, X, ChevronRight, Briefcase, Globe, DollarSign, Calendar, Clock, BarChart2, Loader2 } from 'lucide-react';
+import { Search, Filter, X, ChevronRight, Briefcase, Globe, DollarSign, Calendar, CheckCircle, Clock, BarChart2, Loader2 } from 'lucide-react';
 
 // --- Components ---
 
 const Header = () => (
     <header className="bg-white shadow-sm p-4 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto flex justify-center items-center">
+        <div className="max-w-7xl mx-auto flex justify-start items-center">
             <div className="flex items-center space-x-4">
                 <img 
-                    src="https://www.unops.org/assets/unops-logo-blue.svg" 
+                    src="/UNOPS_logo_2016_website_blue_304x53.png" 
                     alt="UNOPS Logo" 
                     className="h-8"
-                    onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/120x32/0075C9/FFFFFF?text=UNOPS'; }}
                 />
-                <h1 className="text-xl md:text-2xl font-semibold text-gray-700">UNOPS Africa Funding Gateway</h1>
+                <h1 className="text-xl font-semibold text-[#0075C9]">Africa Region Funding Gateway</h1>
             </div>
         </div>
     </header>
@@ -27,10 +26,14 @@ const FilterSection = ({ filters, setFilters, onReset, allOpportunities }) => {
         const { name, value } = e.target;
         setFilters(prev => ({ ...prev, [name]: value }));
     };
+    
+    const handleSearch = (e) => {
+        e.preventDefault();
+    };
 
     return (
         <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
+            <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
                 <div className="lg:col-span-2">
                     <label htmlFor="searchTerm" className="text-sm font-medium text-gray-600 block mb-1">Search by Keyword</label>
                     <div className="relative">
@@ -54,7 +57,7 @@ const FilterSection = ({ filters, setFilters, onReset, allOpportunities }) => {
                         {countries.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                 </div>
-            </div>
+            </form>
              <button onClick={onReset} className="mt-4 text-sm text-gray-600 hover:text-blue-600">
                 Reset filters
             </button>
@@ -139,6 +142,17 @@ const FundingModal = ({ opportunity, onClose }) => {
     );
 };
 
+const Footer = () => (
+    <footer style={{ backgroundColor: '#0092d1' }} className="mt-12">
+        <div className="max-w-7xl mx-auto py-4 px-4 md:px-8">
+            <p className="text-center text-xs text-white">
+                This AI-powered application is developed by the GPO PSC Information Management and Analytics Team (psc.imat@unops.org)
+            </p>
+        </div>
+    </footer>
+);
+
+
 // --- Main App Component ---
 export default function App() {
     const [selectedOpportunity, setSelectedOpportunity] = useState(null);
@@ -191,9 +205,9 @@ export default function App() {
     }, [filters, allOpportunities]);
 
     return (
-        <div className="bg-gray-100 min-h-screen font-sans">
+        <div className="bg-gray-100 min-h-screen font-sans flex flex-col">
             <Header />
-            <main className="max-w-7xl mx-auto p-4 md:p-8">
+            <main className="max-w-7xl mx-auto p-4 md:p-8 w-full flex-grow">
                 <FilterSection filters={filters} setFilters={setFilters} onReset={() => setFilters(initialFilters)} allOpportunities={allOpportunities} />
                 
                 <div className="mt-8">
@@ -226,6 +240,8 @@ export default function App() {
                     )}
                 </div>
             </main>
+            
+            <Footer />
             
             <FundingModal opportunity={selectedOpportunity} onClose={() => setSelectedOpportunity(null)} />
         </div>
