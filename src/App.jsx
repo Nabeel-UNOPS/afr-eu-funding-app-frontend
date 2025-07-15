@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Filter, X, ChevronRight, Briefcase, Globe, DollarSign, Calendar, CheckCircle, Clock, BarChart2, Loader2 } from 'lucide-react';
+import { Search, Filter, X, ChevronRight, Briefcase, Globe, DollarSign, Calendar, Clock, BarChart2, Loader2 } from 'lucide-react';
 
 // --- Components ---
 
@@ -20,23 +20,17 @@ const Header = () => (
 );
 
 const FilterSection = ({ filters, setFilters, onReset, allOpportunities }) => {
-    const countries = [...new Set(allOpportunities.map(op => op.country).filter(Boolean))].sort();
-    const thematicPriorities = [...new Set(allOpportunities.map(op => op.thematicPriority).filter(Boolean))].sort();
+    const countries = [...new Set(allOpportunities.map(op => op.country).filter(Boolean).filter(c => c !== 'Not specified'))].sort();
+    const thematicPriorities = [...new Set(allOpportunities.map(op => op.thematicPriority).filter(Boolean).filter(p => p !== 'Not specified'))].sort();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFilters(prev => ({ ...prev, [name]: value }));
     };
-    
-    const handleSearch = (e) => {
-        e.preventDefault();
-        // The filtering is already reactive, but a button provides a clear user action.
-        // In a real app, this could trigger a new API call.
-    };
 
     return (
         <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-            <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
                 <div className="lg:col-span-2">
                     <label htmlFor="searchTerm" className="text-sm font-medium text-gray-600 block mb-1">Search by Keyword</label>
                     <div className="relative">
@@ -60,17 +54,9 @@ const FilterSection = ({ filters, setFilters, onReset, allOpportunities }) => {
                         {countries.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                 </div>
-
-                <div>
-                    <label htmlFor="thematicPriority" className="text-sm font-medium text-gray-600 block mb-1">Thematic Priority</label>
-                    <select name="thematicPriority" id="thematicPriority" value={filters.thematicPriority} onChange={handleInputChange} className="w-full p-2 border border-gray-300 rounded-md bg-white">
-                        <option value="">All Priorities</option>
-                        {thematicPriorities.map(p => <option key={p} value={p}>{p}</option>)}
-                    </select>
-                </div>
-            </form>
-            <button onClick={onReset} className="mt-4 text-sm text-gray-600 hover:text-blue-600">
-                Reset all filters
+            </div>
+             <button onClick={onReset} className="mt-4 text-sm text-gray-600 hover:text-blue-600">
+                Reset filters
             </button>
         </div>
     );
@@ -78,7 +64,7 @@ const FilterSection = ({ filters, setFilters, onReset, allOpportunities }) => {
 
 const FundingCard = ({ opportunity, onSelect }) => {
     const { title, country, fundingAmount, deadline, status } = opportunity;
-    const isPastDeadline = deadline ? new Date(deadline) < new Date() : false;
+    const isPastDeadline = deadline && deadline !== 'Not specified' ? new Date(deadline) < new Date() : false;
     const effectiveStatus = status === 'Closed' || isPastDeadline ? 'Closed' : 'Open';
 
     return (
@@ -90,17 +76,17 @@ const FundingCard = ({ opportunity, onSelect }) => {
                 <h4 className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors duration-300 mb-2">{title}</h4>
                 <div className="flex items-center text-gray-500 text-sm mb-2">
                     <Globe className="w-4 h-4 mr-2 flex-shrink-0" />
-                    <span>{country || 'N/A'}</span>
+                    <span>{country || 'Not specified'}</span>
                 </div>
                 <div className="flex items-center text-gray-500 text-sm">
                     <DollarSign className="w-4 h-4 mr-2 flex-shrink-0" />
-                    <span className="font-medium text-gray-700">{fundingAmount || 'N/A'}</span>
+                    <span className="font-medium text-gray-700">{fundingAmount || 'Not specified'}</span>
                 </div>
             </div>
             <div className="border-t border-gray-100 bg-gray-50/50 p-4 flex justify-between items-center rounded-b-lg">
                  <div className="flex items-center text-sm text-gray-500">
                     <Calendar className="w-4 h-4 mr-2 text-gray-400" />
-                    <span>Deadline: {deadline ? new Date(deadline).toLocaleDateString() : 'N/A'}</span>
+                    <span>Deadline: {deadline || 'Not specified'}</span>
                 </div>
                 <button onClick={() => onSelect(opportunity)} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     Details
@@ -120,9 +106,8 @@ const FundingModal = ({ opportunity, onClose }) => {
                     <div>
                         <h2 className="text-2xl font-bold text-gray-800">{opportunity.title}</h2>
                         <div className="flex flex-wrap items-center text-gray-500 mt-2 gap-x-4 gap-y-1 text-sm">
-                            <span className="flex items-center"><Globe className="w-4 h-4 mr-1.5"/>{opportunity.country || 'N/A'}</span>
-                            <span className="flex items-center"><Briefcase className="w-4 h-4 mr-1.5"/>{opportunity.thematicPriority || 'N/A'}</span>
-                            <span className="flex items-center"><DollarSign className="w-4 h-4 mr-1.5"/>{opportunity.fundingAmount || 'N/A'}</span>
+                            <span className="flex items-center"><Globe className="w-4 h-4 mr-1.5"/>{opportunity.country || 'Not specified'}</span>
+                            <span className="flex items-center"><DollarSign className="w-4 h-4 mr-1.5"/>{opportunity.fundingAmount || 'Not specified'}</span>
                         </div>
                     </div>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100">
@@ -143,7 +128,7 @@ const FundingModal = ({ opportunity, onClose }) => {
 
                 <div className="p-4 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div className="text-sm text-gray-600">
-                        <strong>Deadline:</strong> {opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}
+                        <strong>Deadline:</strong> {opportunity.deadline || 'Not specified'}
                     </div>
                     <a href={opportunity.source_url || '#'} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-white bg-green-600 rounded-md hover:bg-green-700 inline-flex items-center justify-center">
                         Go to Source <ChevronRight className="w-4 h-4 ml-1"/>
@@ -200,7 +185,7 @@ export default function App() {
             return (
                 (filters.country ? op.country === filters.country : true) &&
                 (filters.thematicPriority ? op.thematicPriority === filters.thematicPriority : true) &&
-                (titleMatch || descriptionMatch || countryMatch)
+                (searchTermLower === '' || titleMatch || descriptionMatch || countryMatch)
             );
         });
     }, [filters, allOpportunities]);
@@ -228,7 +213,7 @@ export default function App() {
                             {filteredOpportunities.length > 0 ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {filteredOpportunities.map((op, index) => (
-                                        <FundingCard key={op.id || index} opportunity={op} onSelect={setSelectedOpportunity} />
+                                        <FundingCard key={op.source_url || index} opportunity={op} onSelect={setSelectedOpportunity} />
                                     ))}
                                 </div>
                             ) : (
