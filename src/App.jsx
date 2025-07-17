@@ -5,15 +5,21 @@ import { Search, Filter, X, ChevronRight, Briefcase, Globe, DollarSign, Calendar
 
 const Header = () => (
     <header className="bg-white shadow-sm p-4 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto flex justify-start items-center">
-            <div className="flex items-center space-x-4">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+            {/* Left side: Logo */}
+            <div className="flex-1 flex justify-start">
                 <img 
                     src="/UNOPS_logo_2016_website_blue_304x53.png" 
                     alt="UNOPS Logo" 
                     className="h-8"
                 />
-                <h1 className="text-xl font-semibold text-[#0075C9]">Africa Region Funding Gateway</h1>
             </div>
+            {/* Center: Title */}
+            <div className="flex-1 flex justify-center">
+                <h1 className="text-xl font-semibold text-[#0075C9]">UNOPS Funding Gateway</h1>
+            </div>
+            {/* Right side: Empty spacer to balance the layout */}
+            <div className="flex-1"></div>
         </div>
     </header>
 );
