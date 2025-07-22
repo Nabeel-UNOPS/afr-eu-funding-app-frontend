@@ -1,20 +1,12 @@
-const { defineConfig } = require('vite');
-const react = require('@vitejs/plugin-react');
+    import { defineConfig } from 'vite'
+    import react from '@vitejs/plugin-react'
+    import path from 'path'
 
-// https://vitejs.dev/config/
-module.exports = defineConfig({
-  plugins: [react()],
-});
-```javascript
-// FILE: tailwind.config.js
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};
+    export default defineConfig({
+      plugins: [react()],
+      resolve: {
+        alias: {
+          "@": path.resolve(__dirname, "./src"),
+        },
+      },
+    })
