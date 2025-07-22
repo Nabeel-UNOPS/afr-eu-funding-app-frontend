@@ -1,15 +1,13 @@
-    import React, { useState, useMemo, useEffect } from 'react';
-    import { Search, Globe, DollarSign, Calendar, ChevronRight, Loader2, LayoutDashboard, Building, Settings, LogOut, FileText, X } from 'lucide-react';
+ import React, { useState, useMemo, useEffect } from 'react';
+    import { Search, Globe, DollarSign, ChevronRight, Loader2, LayoutDashboard, Building, Settings, LogOut, FileText, X } from 'lucide-react';
     import { Card, CardHeader, CardContent, CardFooter } from './components/ui/card';
     
-    // --- Reusable UI Components ---
     const Button = ({ children, className = '', ...props }) => (
         <button className={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 ${className}`} {...props}>
             {children}
         </button>
     );
 
-    // --- Main Application Components ---
     const Sidebar = () => (
         <aside className="w-64 bg-white border-r flex-col hidden lg:flex">
             <div className="p-4 border-b h-16 flex items-center">
